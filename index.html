@@ -473,6 +473,17 @@
             setLanguage('fr');
         });
 
+		// Add event listener for the 'change' event
+		fileInput.addEventListener('change', handleFileSelect);
+		
+		// read immediately upon file select
+		function handleFileSelect(event) {
+			const file = event.target.files[0]; // Get the selected file
+			if (file) {
+			readConversations();
+			}
+		}
+        
         function setLanguage(lang) {
             currentLanguage = lang;
 
@@ -521,7 +532,8 @@
             mangle: false          // Disable escaping certain characters
         });
 
-        loadButton.addEventListener('click', function () {
+        loadButton.addEventListener('click', readConversations);
+        function readConversations() {
             const file = fileInput.files[0];
             if (!file) {
                 alert(translations[currentLanguage].fileLabel);
