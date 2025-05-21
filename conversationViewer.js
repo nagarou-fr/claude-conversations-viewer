@@ -363,6 +363,9 @@
                     // Display messages for this conversation
                     const conversationIndex = parseInt(this.getAttribute('data-index'));
                     displayMessages(data[conversationIndex]);
+                    // scroll messages to top
+                    const messagesContainer = document.getElementById('messages-container');
+                    messagesContainer.scrollTop = 0;
                 });
 
                 conversationList.appendChild(conversationItem);
@@ -389,6 +392,21 @@
                     <div>${translations[currentLanguage].updatedDate} ${formatDate(conversation.updated_at)}</div>
                 </div>
             `;
+
+            // sort messages by date
+            conversation.chat_messages.sort((a, b) => {
+                diff = new Date(a.created_at) - new Date(b.created_at);
+                    // if dates are equal,  - sort by sender - user before claude
+                if (diff == 0) {
+                    if (a.sender === 'human') {
+                        return -1; // user before claude
+                    }
+                    else if (b.sender === 'human') {
+                        return 1; // claude after user
+                    }
+                }
+                return diff;
+            });
 
             conversation.chat_messages.forEach(message => {
                 const isUser = message.sender === 'human';
