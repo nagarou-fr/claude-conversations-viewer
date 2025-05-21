@@ -20,6 +20,7 @@
                 untitled: 'Untitled',
                 placeHolder: 'Search Conversations...',
                 searchButton: 'Anywhere',
+                emptySearch: 'No results found.',
                 searchOptions: {
                     'anywhere': 'Anywhere',
                     'title': 'Title',
@@ -45,6 +46,7 @@
                 untitled: 'Sans titre',
                 placeHolder: 'Rechercher des conversations...',
                 searchButton: 'Partout',
+                emptySearch: 'Aucun résultat trouvé.',
                 searchOptions: {
                     'anywhere': 'Partout',
                     'title': 'Titre',
@@ -94,7 +96,7 @@
             searchTypeOptions.forEach(option => {
                 option.addEventListener('click', function() {
                 // Update the button text
-                    currentSearchType = this.dataset.value;
+                     currentSearchType = this.dataset.value;
 
                     const buttonText = translations[currentLanguage].searchOptions[currentSearchType] + ' ▾';
                     searchTypeButton.textContent = buttonText;
@@ -126,12 +128,10 @@
 
             const filteredData = searchFilter(request);
 
-            if (false) { //(filteredData.length == 0) {
-                console.log("empty search - provide feedback")
+            if (filteredData.length == 0) {
+                statsElement.textContent = translations[currentLanguage].emptySearch;
             }
-            else {
-                renderConversations(filteredData);
-            }
+            renderConversations(filteredData);
         }
 
         // Clear button functionality
@@ -251,12 +251,23 @@
                 if (value === currentSearchType) {
                     option.classList.add('active');
                 }
-                
                 searchTypeDropdown.appendChild(option);
+                 // code search is not yet implemented
+                if (value == 'code') {
+                    disable(option);
+                }
+
             });
         
         // Set event listeners for new options
         setupSearchOptionListeners();
+
+            function disable(option) {
+                option.classList.add('disabled');
+                option.setAttribute('aria-disabled', 'true');
+                option.style.pointerEvents = 'none';
+                option.style.opacity = '0.5';
+            }
     }
 
 
@@ -707,7 +718,6 @@
 
         // handle keypress in search field. 
         function searchFieldKeyDown(event) {
-            const searchOnKeypress = true // live search
 
             if (event.key == 'Escape') {
                 searchField.blur();
@@ -716,7 +726,7 @@
                 clearSearch();
             }
 
-            else if (event.key === 'Enter' || searchOnKeypress) {
+            else if (event.key === 'Enter') {
                 if (event.key == 'Enter') {
             // force defocus of field so Enter key can be used to navigate
                     searchField.blur();
@@ -750,5 +760,5 @@
        buildSearchDropdown()
        initSearchNavigation()
        // uncomment to load conversations automatically. specify path.
-     //  autoload('conversations.json')
+ //      autoload('conversations.json')
 }); // addEventListener('DOMContentLoaded
